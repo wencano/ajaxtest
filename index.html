@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+
+<h1 onclick="getData()">This is a Heading</h1>
+<p>This is a paragraph.</p>
+<button onclick="submitData()">Submit</button>&nbsp;&nbsp;&nbsp;<button onclick="getData()">Get</button>
+
+<br /><br />
+<div id="ajax-content" style="border: 1px solid #000; padding: 15px;"></div>
+<br /><br />
+
+<form id="myform" >
+  <input type="text" name="name" value="" placeholder="Name" /><br />
+  <textarea name="message" placeholder="Message"></textarea><br />
+  <input type="button" value="Submit" id="submit-form"/>
+</form>
+
+<script type="text/javascript">
+
+  // Get Data.txt
+  function getData(){
+    jQuery.ajax({
+      url: "http://localhost/ajaxtest/reader.php",
+      
+      success: function(data){
+        try {
+          var res = JSON.parse(data);
+
+          if(res.name) {
+            var personHtml =  "<b>Name:</b> " + res.name + "<br />" +
+                    "<b>Message:</b> " + res.message + "<hr />";
+          
+            $("#ajax-content").append( personHtml );
+          }
+          
+        }
+
+        catch(e) {
+          alert("Invalid response!");
+        }
+
+      },
+      
+    });
+  }
+
+  // Submit Data
+  function submitData(data){
+    jQuery.ajax({
+      url: "http://localhost/ajaxtest/form.php",
+      type: "post",
+      data: data || [],
+      success: function(data){
+        alert("Submitted successfully!");
+      },
+      
+    });
+  }
+
+
+  $(document).ready(function(){
+
+
+    $("#submit-form").on('click', function(e){
+      submitForm();
+    });
+  });
+
+
+  // Submit Form
+  function submitForm() {
+    submitData( $("#myform").serialize() );
+    setTimeout(function(){
+      getData();
+    },100);
+  }
+
+</script>
+
+</body>
+</html>
